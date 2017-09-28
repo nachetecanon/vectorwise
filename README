@@ -1,0 +1,2 @@
+
+This is not intended to be used in production. Vector uses an array of tricks to get as close to the cpu and ram as possible. Running in a container is a very bad idea. 
