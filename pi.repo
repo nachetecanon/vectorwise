@@ -1,0 +1,11 @@
+[pi]
+name=PI repo
+baseurl=http://repository/mirrors/pi/$releasever/x86_64
+enabled=1
+gpgcheck=0
+
+[pi-source]
+name=PI repo sources
+baseurl=http://repository/mirrors/pi/$releasever/SRPMS
+enabled=1
+gpgcheck=0
