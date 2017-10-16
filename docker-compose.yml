@@ -1,0 +1,10 @@
+vector:
+  image: docker-test.pibenchmark.com/vector:0.0.1
+  environment:
+    VECTOR_DB: testdb
+    VECTOR_USER: testuser
+    VECTOR_PASS: testpass
+  ports:
+  - 27839:27839/tcp
+  volumes:
+  - vector-kevtest:/opt/Actuan/VectorVW
