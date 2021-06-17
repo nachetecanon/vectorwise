@@ -2,11 +2,6 @@
 
 . /etc/profile.d/vector.sh
 
-# start Vector
-echo "--- starting vector ---"
-ingstart
-echo "--- hopefully all good ---"
-
 # create a db and user(s)
 # TODO - parameterise
 if [ ! -f "$II_SYSTEM/ingres/data/db_created" ]; then
