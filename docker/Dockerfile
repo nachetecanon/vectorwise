@@ -13,10 +13,10 @@ RUN apk add  --update-cache curl  tar unzip  bash && \
     mkdir -p /opt/actian && \
     tar xfz  /tmp/actian.tgz -C /opt/actian && \
     tar xfz /tmp/patch.Z -C /opt/actian
-#====================================================
+#========================================================================================================
 # service command must be provided, and systemd should be enabled
-# this comes from https://github.com/CentOS/sig-cloud-instance-images/issues/28
-#
+# this suggestion about enabling systemd comes from https://github.com/CentOS/sig-cloud-instance-images/issues/28
+#========================================================================================================
 FROM scratch
 ADD centos-7-docker.tar.xz /
 ARG PATCH_NAME
@@ -25,37 +25,24 @@ ARG ACTIAN_NAME
 MAINTAINER nacho.canon@predictx.com <Nacho Canon>
 
 ENV II_SYSTEM=/opt/Actian/VectorVW\
-    II_INSTALLATION=VW
+    II_INSTALLATION=VW \
+    PATH=$PATH:$II_SYSTEM/ingres/bin:$II_SYSTEM/ingres/utility \
+    AWK_CMD=/usr/bin/awk \
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$II_SYSTEM/ingres/lib
 
 COPY --from=downloader /opt/actian/${ACTIAN_NAME} /opt/actian
 COPY --from=downloader /opt/actian/${PATCH_URL}   /opt/actian
-
+ADD entrypoint.sh /
 #ADD pi.repo /etc/yum.repos.d
 #ADD vector.sh /etc/profile.d
-
-RUN yum -y install sudo libaio java-11-openjdk initscripts awk && \
+# this install all dependencies before running VW installation.
+# After installation, a patch is applied to that.
+# Instructions following the patch.html file contained in patch distribution
+RUN yum -y install sudo libaio java-11-openjdk initscripts gawk && \
     yes | /opt/actian/${ACTIAN_NAME}/install.sh  -express -acceptlicense && \
-    source $II_SYSTEM/.ingVWsh && \
-    echo "copying patch..." && \
-    mv /opt/actian/${PATCH_NAME} $II_SYSTEM/ingres
+    chmod +x /entrypoint.sh
 
-RUN cd $II_SYSTEM/ingres/${PATCH_NAME} && \
-    echo "applying patch... " && \
-    ingstop && \
-    ingstop -mgmtsvr
-    #&& \
-    #./utility/iiinstaller
+USER actian
 
-
-
-
-#ADD entrypoint-pre.sh /
-#ADD entrypoint.sh /
-
-#CMD /entrypoint-pre.sh
-
-#yes | ./install.sh  -express -acceptlicense
-
-
-
+CMD ["/entrypoint.sh"]
 
