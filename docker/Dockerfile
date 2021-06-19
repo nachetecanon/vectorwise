@@ -26,9 +26,9 @@ MAINTAINER nacho.canon@predictx.com <Nacho Canon>
 
 ENV II_SYSTEM=/opt/Actian/VectorVW\
     II_INSTALLATION=VW \
-    PATH=$PATH:$II_SYSTEM/ingres/bin:$II_SYSTEM/ingres/utility \
+    PATH=$PATH:/opt/Actian/VectorVW/ingres/bin:/opt/Actian/VectorVW/ingres/utility \
     AWK_CMD=/usr/bin/awk \
-    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$II_SYSTEM/ingres/lib
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/Actian/VectorVW/ingres/lib
 
 COPY --from=downloader /opt/actian/${ACTIAN_NAME} /opt/actian
 COPY --from=downloader /opt/actian/${PATCH_URL}   /opt/actian
@@ -40,9 +40,17 @@ ADD entrypoint.sh /
 # Instructions following the patch.html file contained in patch distribution
 RUN yum -y install sudo libaio java-11-openjdk initscripts gawk && \
     yes | /opt/actian/${ACTIAN_NAME}/install.sh  -express -acceptlicense && \
-    chmod +x /entrypoint.sh
+    chmod +x /entrypoint.sh && ln -s $II_SYSTEM/ingress/utility/ingstart /usr/local/bin/ingstart
 
 USER actian
-
-CMD ["/entrypoint.sh"]
+VOLUME $II_SYSTEM/ingres/data
+# Backup
+VOLUME $II_SYSTEM/ingres/ckp
+# Journals
+VOLUME $II_SYSTEM/ingres/jnl
+# TxLog
+VOLUME $II_SYSTEM/ingres/log
+# Configuration
+VOLUME $II_SYSTEM/ingres/files
+ENTRYPOINT ["/entrypoint.sh"]
 

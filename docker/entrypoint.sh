@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ingstart
+ps -ef
 if [[ ! -f "$II_SYSTEM/ingres/data/db_created" ]]; then
     if [[ -n "$VECTOR_DB" ]]; then
         echo "--- creating database $VECTOR_DB ---"
