@@ -1,6 +1,7 @@
 #!/bin/bash
-
-ingstart
+/etc/init.d/actian-vectorVW start
+dockerctl &
+sleep 60
 ps -ef
 if [[ ! -f "$II_SYSTEM/ingres/data/db_created" ]]; then
     if [[ -n "$VECTOR_DB" ]]; then

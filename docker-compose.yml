@@ -1,5 +1,5 @@
 vector:
-  image: docker-test.pibenchmark.com/vector:0.0.1
+  image: vector
   environment:
     VECTOR_DB: testdb
     VECTOR_USER: testuser
@@ -7,4 +7,4 @@ vector:
   ports:
   - 27839:27839/tcp
   volumes:
-  - vector-kevtest:/opt/Actuan/VectorVW
+  - vector:/opt/Actuan/VectorVW/ingress/data

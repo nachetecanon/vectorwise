@@ -32,17 +32,21 @@ ENV II_SYSTEM=/opt/Actian/VectorVW\
 
 COPY --from=downloader /opt/actian/${ACTIAN_NAME} /opt/actian
 COPY --from=downloader /opt/actian/${PATCH_URL}   /opt/actian
-ADD entrypoint.sh /
 #ADD pi.repo /etc/yum.repos.d
 #ADD vector.sh /etc/profile.d
 # this install all dependencies before running VW installation.
 # After installation, a patch is applied to that.
 # Instructions following the patch.html file contained in patch distribution
+ADD entrypoint.sh /
 RUN yum -y install sudo libaio java-11-openjdk initscripts gawk && \
     yes | /opt/actian/${ACTIAN_NAME}/install.sh  -express -acceptlicense && \
-    chmod +x /entrypoint.sh && ln -s $II_SYSTEM/ingress/utility/ingstart /usr/local/bin/ingstart
+    chmod +x /entrypoint.sh && \
+    ln -s $II_SYSTEM/ingress/utility/ingstart /usr/local/bin/ingstart && \
+    ln -s  $II_SYSTEM/ingres/utility/dockerctl /usr/local/bin/dockerctl && \
+    cp $II_SYSTEM/ingres/.ingVWsh /etc/profile.d/vectorVW.sh && \
+    ln -s  $II_SYSTEM/ingres/utility/dockerctl /etc/init.d/dockerctl 
 
-USER actian
+#USER actian
 VOLUME $II_SYSTEM/ingres/data
 # Backup
 VOLUME $II_SYSTEM/ingres/ckp
